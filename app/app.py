@@ -1,3 +1,4 @@
+from openai import OpenAI
 import streamlit as st  # noqa: I001
 
 
@@ -50,6 +51,10 @@ TEXT = {
         "simulation_note": "Simulasi adalah model, bukan fakta sejarah.",
         "choose_language": "Pilih Bahasa / Choose Language",
         "question_empty": "Masukkan pertanyaan.",
+        "thinking": "⏳ OpenAI sedang berpikir...",
+        "result_ready": "✅ Hasil OpenAI selesai",
+        "ai_error": "❌ OpenAI gagal menghasilkan jawaban.",
+        "model": "Model OpenAI",
     },
     "EN": {
         "home": "🏠 Civilization Home",
@@ -93,6 +98,10 @@ TEXT = {
         "simulation_note": "A simulation is a model, not a historical fact.",
         "choose_language": "Choose Language / Pilih Bahasa",
         "question_empty": "Please enter a question.",
+        "thinking": "⏳ OpenAI is thinking...",
+        "result_ready": "✅ OpenAI result ready",
+        "ai_error": "❌ OpenAI could not generate an answer.",
+        "model": "OpenAI model",
     },
 }
 
@@ -561,20 +570,65 @@ def render_ai() -> None:
     st.info(t["ai_note"])
     query = st.text_area(
         t["query"],
-        placeholder="Contoh: Mengapa Borobudur dibangun?" if language == "ID" else "Example: Why was Borobudur built?",
+        placeholder=(
+            "Contoh: Mengapa Borobudur dibangun?"
+            if language == "ID"
+            else "Example: Why was Borobudur built?"
+        ),
     )
+
     if st.button("🤖 " + t["ask"], type="primary", use_container_width=True):
         if not query.strip():
             st.warning(t["question_empty"])
-        else:
-            st.info(
-                "Civilization AI interface is ready. Retrieval + evidence citation "
-                "will be connected in the next engine stage."
+            return
+
+        api_key = st.secrets.get("OPENAI_API_KEY", "")
+        if not api_key:
+            st.error(t["not_configured"])
+            return
+
+        system_prompt = (
+            "You are Civilization AI for the Digital Civilization Simulator Indonesia. "
+            "Answer historical questions carefully. Distinguish established facts from "
+            "interpretation and uncertainty. Never invent sources, evidence, dates, or "
+            "citations. If the platform has not supplied retrieved evidence, explicitly "
+            "say that the answer is general historical context rather than a verified "
+            "Evidence Graph result. Answer in the user's selected language."
+        )
+        user_prompt = (
+            f"Language: {'Indonesian' if language == 'ID' else 'English'}\\n"
+            f"Historical question: {query.strip()}"
+        )
+
+        try:
+            client = OpenAI(api_key=api_key)
+            with st.spinner(t["thinking"]):
+                response = client.responses.create(
+                    model="gpt-4.1-mini",
+                    instructions=system_prompt,
+                    input=user_prompt,
+                )
+
+            answer = (response.output_text or "").strip()
+            if not answer:
+                st.error(t["ai_error"])
+                return
+
+            st.success(t["result_ready"])
+            st.caption(f"{t['model']}: gpt-4.1-mini")
+            with st.container(border=True):
+                st.markdown("### 🤖 Civilization AI")
+                st.write(answer)
+            st.caption(
+                "🟡 Interpretation / Context — until Evidence Graph retrieval and "
+                "source citation are connected."
                 if language == "EN"
-                else "Antarmuka Civilization AI siap. Retrieval + sitasi evidence "
-                "akan dihubungkan pada tahap engine berikutnya."
+                else "🟡 Interpretasi / Konteks — sampai Evidence Graph retrieval "
+                "dan sitasi sumber terhubung."
             )
-            st.caption("Answer type: UNKNOWN — no historical claim has been generated yet.")
+        except Exception as exc:
+            st.error(t["ai_error"])
+            st.caption(f"{type(exc).__name__}: {exc}")
 
 
 def render_era() -> None:
