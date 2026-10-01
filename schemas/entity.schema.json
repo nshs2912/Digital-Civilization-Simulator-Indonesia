@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Civilization Entity",
+  "type": "object",
+  "required": ["entity_id", "entity_type", "name"],
+  "properties": {
+    "entity_id": {"type": "string", "minLength": 1},
+    "entity_type": {"type": "string"},
+    "name": {"type": "string", "minLength": 1},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}
