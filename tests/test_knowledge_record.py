@@ -3,7 +3,7 @@ from src.civilization.knowledge_record import HistoricalKnowledgeRecord
 from src.civilization.provenance import Provenance
 from src.civilization.source import Source
 from src.civilization.spatial import SpatialContext, SpatialContextType
-from src.civilization.temporal import TimeContext, TemporalPrecision
+from src.civilization.temporal import TemporalPrecision, TimeContext
 
 
 def make_record():
