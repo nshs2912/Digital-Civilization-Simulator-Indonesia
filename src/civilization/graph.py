@@ -69,7 +69,7 @@ class KnowledgeGraph:
         errors.extend(
             f"ENTITY:{entity_id}:{error}"
             for entity_id, entity in self._entities.items()
-            for error in getattr(entity, "validate", lambda: [])()
+            for error in getattr(entity, "validate", list)()
         )
         errors.extend(
             f"RELATIONSHIP:{i}:{error}"
