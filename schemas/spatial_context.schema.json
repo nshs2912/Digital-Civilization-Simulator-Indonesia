@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spatial Context",
+  "type": "object",
+  "required": ["place_id", "context_type"],
+  "properties": {
+    "place_id": {"type": "string", "minLength": 1},
+    "context_type": {"type": "string"},
+    "latitude": {"type": ["number", "null"], "minimum": -90, "maximum": 90},
+    "longitude": {"type": ["number", "null"], "minimum": -180, "maximum": 180},
+    "geometry": {"type": ["string", "null"]},
+    "valid_from": {"type": ["integer", "null"]},
+    "valid_to": {"type": ["integer", "null"]},
+    "precision_meters": {"type": ["number", "null"], "minimum": 0}
+  },
+  "additionalProperties": false
+}
