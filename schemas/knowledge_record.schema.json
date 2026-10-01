@@ -1,17 +1,17 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "title":"Historical Knowledge Record",
-  "type":"object",
-  "required":["record_id","claim_id","time_context","evidence","sources","provenance"],
-  "properties":{
-    "record_id":{"type":"string","minLength":1},
-    "claim_id":{"type":"string","minLength":1},
-    "time_context":{"$ref":"time_context.schema.json"},
-    "spatial_context":{"anyOf":[{"$ref":"spatial_context.schema.json"},{"type":"null"}]},
-    "evidence":{"type":"array"},
-    "sources":{"type":"array"},
-    "provenance":{"type":"array"},
-    "metadata":{"type":"object"}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Historical Knowledge Record",
+  "type": "object",
+  "required": ["record_id", "claim_id", "time_context", "evidence", "sources", "provenance"],
+  "properties": {
+    "record_id": {"type": "string", "minLength": 1},
+    "claim_id": {"type": "string", "minLength": 1},
+    "time_context": {"$ref": "time_context.schema.json"},
+    "spatial_context": {"anyOf": [{"$ref": "spatial_context.schema.json"}, {"type": "null"}]},
+    "evidence": {"type": "array", "items": {"$ref": "evidence.schema.json"}, "minItems": 1},
+    "sources": {"type": "array", "items": {"$ref": "source.schema.json"}, "minItems": 1},
+    "provenance": {"type": "array", "items": {"$ref": "provenance.schema.json"}, "minItems": 1},
+    "metadata": {"type": "object"}
   },
-  "additionalProperties":false
+  "additionalProperties": false
 }
