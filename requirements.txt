@@ -1,1 +1,21 @@
+# Web application
 streamlit>=1.40,<2
+
+# AI / LLM integration
+openai>=1.68,<2
+
+# Data analysis and visualization
+pandas>=2.2,<3
+plotly>=5.24,<7
+
+# Knowledge graph and graph analytics
+networkx>=3.3,<4
+
+# Evidence / schema validation
+jsonschema>=4.23,<5
+
+# Temporal utilities
+python-dateutil>=2.9,<3
+
+# HTTP / external source integration
+requests>=2.32,<3
