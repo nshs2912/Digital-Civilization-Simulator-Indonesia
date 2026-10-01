@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -40,8 +39,9 @@ class KnowledgeGraph:
         self._entities[entity_id] = entity
 
     def add_relationship(self, relationship: Relationship) -> None:
-        if relationship.validate():
-            raise ValueError("; ".join(relationship.validate()))
+        errors = relationship.validate()
+        if errors:
+            raise ValueError("; ".join(errors))
         if relationship.subject_id not in self._entities:
             raise KeyError(f"unknown subject: {relationship.subject_id}")
         if relationship.object_id not in self._entities:
@@ -51,13 +51,17 @@ class KnowledgeGraph:
     def entity(self, entity_id: str) -> object:
         return self._entities[entity_id]
 
+    def entity_ids(self) -> tuple[str, ...]:
+        return tuple(self._entities)
+
     def relationships(self) -> tuple[Relationship, ...]:
         return tuple(self._relationships)
 
     def neighbors(self, entity_id: str) -> tuple[Relationship, ...]:
         return tuple(
-            r for r in self._relationships
-            if r.subject_id == entity_id or r.object_id == entity_id
+            relationship
+            for relationship in self._relationships
+            if relationship.subject_id == entity_id or relationship.object_id == entity_id
         )
 
     def validate(self) -> list[str]:
