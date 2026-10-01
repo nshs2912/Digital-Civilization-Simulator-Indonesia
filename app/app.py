@@ -1,14 +1,4 @@
-from pathlib import Path
-import sys
-
 import streamlit as st
-
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
-from src.civilization.ai import get_openai_api_key  # noqa: E402
 
 
 st.set_page_config(
@@ -99,6 +89,8 @@ TEXT = {
         "ask": "Ask Civilization AI",
         "ai_note": "AI sits above the Knowledge Graph and Evidence Graph; answers should remain traceable to sources.",
         "simulation_note": "A simulation is a model, not a historical fact.",
+        "choose_language": "Pilih Bahasa / Choose Language",
+        "question_empty": "Masukkan pertanyaan." if False else "Masukkan pertanyaan.",
     },
 }
 
@@ -142,9 +134,10 @@ def open_page(key: str) -> None:
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-language = st.sidebar.selectbox(
-    "🇮🇩 / 🇬🇧",
+language = st.radio(
+    "🇮🇩 Bahasa Indonesia / 🇬🇧 English",
     ["ID", "EN"],
+    horizontal=True,
     format_func=lambda value: "🇮🇩 Bahasa Indonesia" if value == "ID" else "🇬🇧 English",
 )
 t = TEXT[language]
@@ -181,10 +174,7 @@ def render_home() -> None:
     st.write(t["welcome"])
     st.info(t["intro"])
 
-    try:
-        openai_api_key = get_openai_api_key()
-    except RuntimeError:
-        openai_api_key = None
+    openai_api_key = st.secrets.get("OPENAI_API_KEY", "")
 
     if openai_api_key:
         st.success(t["configured"])
