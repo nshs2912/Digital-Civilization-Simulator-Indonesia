@@ -1,5 +1,5 @@
 from src.civilization.spatial import SpatialContext, SpatialContextType
-from src.civilization.temporal import TimeContext, TemporalPrecision
+from src.civilization.temporal import TemporalPrecision, TimeContext
 
 
 def test_temporal_range_validation():
@@ -19,11 +19,21 @@ def test_temporal_contains():
 
 
 def test_spatial_coordinates_are_validated():
-    context = SpatialContext("place:borobudur", SpatialContextType.ARCHAEOLOGICAL, latitude=-100)
+    context = SpatialContext(
+        "place:borobudur",
+        SpatialContextType.ARCHAEOLOGICAL,
+        latitude=-100,
+    )
     assert "latitude out of range" in context.validate()
 
 
 def test_historical_and_current_contexts_are_distinct():
-    historical = SpatialContext("place:borobudur", SpatialContextType.HISTORICAL)
-    current = SpatialContext("place:borobudur", SpatialContextType.CURRENT)
+    historical = SpatialContext(
+        "place:borobudur",
+        SpatialContextType.HISTORICAL,
+    )
+    current = SpatialContext(
+        "place:borobudur",
+        SpatialContextType.CURRENT,
+    )
     assert historical.context_type != current.context_type
