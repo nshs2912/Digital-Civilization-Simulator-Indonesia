@@ -1,6 +1,8 @@
 from pathlib import Path
 
+
 ROOT = Path(__file__).parents[1]
+
 
 def test_bilingual_foundation_exists():
     required = [
@@ -12,6 +14,7 @@ def test_bilingual_foundation_exists():
     ]
     assert all((ROOT / p).is_file() for p in required)
 
+
 def test_historical_period_and_time_model_are_documented():
     ontology = (ROOT / "docs/ontology/civilization_ontology.id.md").read_text()
     constitution = (ROOT / "docs/constitution/historical_constitution.id.md").read_text()
@@ -19,6 +22,7 @@ def test_historical_period_and_time_model_are_documented():
     assert "Event Time" in constitution
     assert "Source Time" in constitution
     assert "Knowledge Time" in constitution
+
 
 def test_evidence_and_model_confidence_are_separate():
     text = (ROOT / "docs/governance/evidence_policy.id.md").read_text()
