@@ -24,9 +24,12 @@ class TimeContext:
 
     def validate(self) -> list[str]:
         errors: list[str] = []
-        if self.event_start is not None and self.event_end is not None:
-            if self.event_end < self.event_start:
-                errors.append("event_end cannot precede event_start")
+        if (
+            self.event_start is not None
+            and self.event_end is not None
+            and self.event_end < self.event_start
+        ):
+            errors.append("event_end cannot precede event_start")
         if self.confidence is not None and not 0 <= self.confidence <= 1:
             errors.append("confidence must be between 0 and 1")
         if self.precision == TemporalPrecision.PERIOD and not self.period_id:
