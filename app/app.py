@@ -48,6 +48,8 @@ TEXT = {
         "ask": "Tanyakan kepada Civilization AI",
         "ai_note": "AI akan ditempatkan di atas Knowledge Graph dan Evidence Graph; jawaban harus dapat ditelusuri ke sumber.",
         "simulation_note": "Simulasi adalah model, bukan fakta sejarah.",
+        "choose_language": "Pilih Bahasa / Choose Language",
+        "question_empty": "Masukkan pertanyaan.",
     },
     "EN": {
         "home": "🏠 Civilization Home",
@@ -89,6 +91,8 @@ TEXT = {
         "ask": "Ask Civilization AI",
         "ai_note": "AI sits above the Knowledge Graph and Evidence Graph; answers should remain traceable to sources.",
         "simulation_note": "A simulation is a model, not a historical fact.",
+        "choose_language": "Choose Language / Pilih Bahasa",
+        "question_empty": "Please enter a question.",
     },
 }
 
@@ -133,11 +137,12 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 language = st.radio(
-    "🇮🇩 Bahasa Indonesia / 🇬🇧 English",
+    t["choose_language"],
     ["ID", "EN"],
     horizontal=True,
     format_func=lambda value: "🇮🇩 Bahasa Indonesia" if value == "ID" else "🇬🇧 English",
 )
+
 t = TEXT[language]
 
 st.sidebar.title("🌏 Digital Civilization")
@@ -307,10 +312,10 @@ def render_evidence() -> None:
 def render_ai() -> None:
     page_header(t["ai"], "Evidence-grounded historical reasoning.")
     st.info(t["ai_note"])
-    query = st.text_area(t["query"], placeholder="Contoh: Mengapa Borobudur dibangun?")
+    query = st.text_area(t["query"], placeholder="Contoh: Mengapa Borobudur dibangun?" if language == "ID" else "Example: Why was Borobudur built?")
     if st.button("🤖 " + t["ask"], type="primary", use_container_width=True):
         if not query.strip():
-            st.warning("Please enter a question." if language == "EN" else "Masukkan pertanyaan.")
+            st.warning(t["question_empty"])
         else:
             st.info(
                 "Civilization AI interface is ready. Retrieval + evidence citation "
