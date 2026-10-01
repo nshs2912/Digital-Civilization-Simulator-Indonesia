@@ -15,7 +15,11 @@ class CivilizationSnapshot:
 
     @classmethod
     def build(
-        cls, graph: KnowledgeGraph, civilization_id: str, time: int, place_id: str
+        cls,
+        graph: KnowledgeGraph,
+        civilization_id: str,
+        time: int,
+        place_id: str,
     ) -> "CivilizationSnapshot":
         relationships = [
             relationship
