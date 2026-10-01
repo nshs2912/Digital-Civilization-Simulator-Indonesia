@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Civilization Relationship",
+  "type": "object",
+  "required": ["subject_id", "predicate", "object_id"],
+  "properties": {
+    "subject_id": {"type": "string", "minLength": 1},
+    "predicate": {"type": "string", "minLength": 1},
+    "object_id": {"type": "string", "minLength": 1},
+    "valid_from": {"type": ["integer", "null"]},
+    "valid_to": {"type": ["integer", "null"]},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "model_confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+  },
+  "additionalProperties": false
+}
