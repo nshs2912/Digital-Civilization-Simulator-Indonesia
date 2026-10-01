@@ -17,9 +17,12 @@ class Relationship:
             errors.append("relationship endpoints are required")
         if not self.predicate:
             errors.append("predicate is required")
-        if self.valid_from is not None and self.valid_to is not None:
-            if self.valid_to < self.valid_from:
-                errors.append("valid_to cannot precede valid_from")
+        if (
+            self.valid_from is not None
+            and self.valid_to is not None
+            and self.valid_to < self.valid_from
+        ):
+            errors.append("valid_to cannot precede valid_from")
         if self.model_confidence is not None and not 0 <= self.model_confidence <= 1:
             errors.append("model_confidence must be between 0 and 1")
         return errors
