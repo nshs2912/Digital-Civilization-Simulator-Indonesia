@@ -36,6 +36,80 @@ class HistoricalIntegrityEngine:
         ]
 
     @staticmethod
+    def validate_temporal_range(
+        valid_from: int | None,
+        valid_to: int | None,
+        label: str,
+    ) -> list[IntegrityIssue]:
+        if valid_from is not None and valid_to is not None and valid_to < valid_from:
+            return [
+                IntegrityIssue(
+                    "TEMPORAL_CONFLICT",
+                    "ERROR",
+                    f"{label} has valid_to earlier than valid_from.",
+                )
+            ]
+        return []
+
+    @staticmethod
+    def validate_confidence(
+        evidence_strength: str,
+        model_confidence: float | None,
+        label: str,
+    ) -> list[IntegrityIssue]:
+        if model_confidence is None:
+            return []
+        if not 0 <= model_confidence <= 1:
+            return [
+                IntegrityIssue(
+                    "CONFIDENCE_MISMATCH",
+                    "ERROR",
+                    f"{label} has model confidence outside 0..1.",
+                )
+            ]
+        if evidence_strength in {"INFERRED", "CONTEXTUAL"} and model_confidence > 0.95:
+            return [
+                IntegrityIssue(
+                    "CONFIDENCE_MISMATCH",
+                    "WARNING",
+                    f"{label} has very high model confidence for non-direct evidence.",
+                )
+            ]
+        return []
+
+    @staticmethod
+    def validate_simulation_boundary(
+        claim_type: str,
+        simulation: bool,
+        label: str,
+    ) -> list[IntegrityIssue]:
+        if simulation and claim_type == "FACT":
+            return [
+                IntegrityIssue(
+                    "SIMULATION_AS_FACT",
+                    "ERROR",
+                    f"{label} is marked FACT but originates from simulation.",
+                )
+            ]
+        return []
+
+    @staticmethod
+    def validate_spatial_pair(
+        first_place_id: str | None,
+        second_place_id: str | None,
+        label: str,
+    ) -> list[IntegrityIssue]:
+        if first_place_id and second_place_id and first_place_id != second_place_id:
+            return [
+                IntegrityIssue(
+                    "SPATIAL_CONFLICT",
+                    "WARNING",
+                    f"{label} references different spatial contexts.",
+                )
+            ]
+        return []
+
+    @staticmethod
     def validate_knowledge_record(record) -> list[IntegrityIssue]:
         issues = [
             IntegrityIssue("KNOWLEDGE_RECORD_INVALID", "ERROR", error)
