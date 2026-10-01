@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
+
 class ClaimType(str, Enum):
     FACT = "FACT"
     INTERPRETATION = "INTERPRETATION"
     HYPOTHESIS = "HYPOTHESIS"
     DISPUTED = "DISPUTED"
     UNKNOWN = "UNKNOWN"
+
 
 class ClaimLifecycle(str, Enum):
     PROPOSED = "PROPOSED"
@@ -17,6 +19,7 @@ class ClaimLifecycle(str, Enum):
     DISPUTED = "DISPUTED"
     REVISED = "REVISED"
     SUPERSEDED = "SUPERSEDED"
+
 
 @dataclass(frozen=True)
 class KnowledgeClaim:
@@ -37,7 +40,7 @@ class KnowledgeClaim:
             errors.append("predicate is required")
         if not self.claim_text:
             errors.append("claim_text is required")
-        if not 0 <= self.confidence <= 1 if self.confidence is not None else False:
+        if self.confidence is not None and not 0 <= self.confidence <= 1:
             errors.append("confidence must be between 0 and 1")
         if self.claim_type == ClaimType.FACT and not self.evidence_ids:
             errors.append("FACT claims require evidence")
