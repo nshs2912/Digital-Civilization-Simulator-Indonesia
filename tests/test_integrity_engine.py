@@ -27,3 +27,30 @@ def test_fact_without_evidence_is_invalid():
     )
     issues = HistoricalIntegrityEngine.validate_claim_evidence((claim,))
     assert issues[0].code == "UNSUPPORTED_CLAIM"
+
+
+def test_detects_temporal_conflict():
+    issues = HistoricalIntegrityEngine.validate_temporal_range(900, 800, "relationship")
+    assert issues[0].code == "TEMPORAL_CONFLICT"
+
+
+def test_detects_confidence_mismatch():
+    issues = HistoricalIntegrityEngine.validate_confidence(
+        "INFERRED", 0.99, "inferred claim"
+    )
+    assert issues[0].code == "CONFIDENCE_MISMATCH"
+    assert issues[0].severity == "WARNING"
+
+
+def test_blocks_simulation_as_fact():
+    issues = HistoricalIntegrityEngine.validate_simulation_boundary(
+        "FACT", True, "simulation result"
+    )
+    assert issues[0].code == "SIMULATION_AS_FACT"
+
+
+def test_flags_spatial_conflict():
+    issues = HistoricalIntegrityEngine.validate_spatial_pair(
+        "place:borobudur", "place:prambanan", "claim"
+    )
+    assert issues[0].code == "SPATIAL_CONFLICT"
