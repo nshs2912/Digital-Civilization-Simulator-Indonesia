@@ -29,7 +29,11 @@ class SpatialContext:
             errors.append("latitude out of range")
         if self.longitude is not None and not -180 <= self.longitude <= 180:
             errors.append("longitude out of range")
-        if self.valid_from is not None and self.valid_to is not None and self.valid_to < self.valid_from:
+        if (
+            self.valid_from is not None
+            and self.valid_to is not None
+            and self.valid_to < self.valid_from
+        ):
             errors.append("valid_to cannot precede valid_from")
         if self.precision_meters is not None and self.precision_meters < 0:
             errors.append("precision_meters cannot be negative")
