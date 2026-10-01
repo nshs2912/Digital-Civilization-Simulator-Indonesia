@@ -96,6 +96,24 @@ TEXT = {
     },
 }
 
+LANGUAGE_OPTIONS = ["ID", "EN"]
+DEFAULT_LANGUAGE = "ID"
+
+
+if "language" not in st.session_state:
+    st.session_state.language = DEFAULT_LANGUAGE
+
+language = st.radio(
+    TEXT[DEFAULT_LANGUAGE]["choose_language"],
+    LANGUAGE_OPTIONS,
+    index=LANGUAGE_OPTIONS.index(st.session_state.language),
+    horizontal=True,
+    format_func=lambda value: "🇮🇩 Bahasa Indonesia" if value == "ID" else "🇬🇧 English",
+)
+st.session_state.language = language
+
+t = TEXT[language]
+
 MODULES = [
     ("map", "🗺"),
     ("time", "⏳"),
@@ -135,15 +153,6 @@ def open_page(key: str) -> None:
 
 if "page" not in st.session_state:
     st.session_state.page = "home"
-
-language = st.radio(
-    t["choose_language"],
-    ["ID", "EN"],
-    horizontal=True,
-    format_func=lambda value: "🇮🇩 Bahasa Indonesia" if value == "ID" else "🇬🇧 English",
-)
-
-t = TEXT[language]
 
 st.sidebar.title("🌏 Digital Civilization")
 st.sidebar.caption("Experience Indonesia Across Time")
@@ -312,7 +321,10 @@ def render_evidence() -> None:
 def render_ai() -> None:
     page_header(t["ai"], "Evidence-grounded historical reasoning.")
     st.info(t["ai_note"])
-    query = st.text_area(t["query"], placeholder="Contoh: Mengapa Borobudur dibangun?" if language == "ID" else "Example: Why was Borobudur built?")
+    query = st.text_area(
+        t["query"],
+        placeholder="Contoh: Mengapa Borobudur dibangun?" if language == "ID" else "Example: Why was Borobudur built?",
+    )
     if st.button("🤖 " + t["ask"], type="primary", use_container_width=True):
         if not query.strip():
             st.warning(t["question_empty"])
