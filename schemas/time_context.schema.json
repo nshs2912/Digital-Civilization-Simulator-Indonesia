@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Temporal Context",
+  "type": "object",
+  "properties": {
+    "event_start": {"type": ["integer", "null"]},
+    "event_end": {"type": ["integer", "null"]},
+    "source_year": {"type": ["integer", "null"]},
+    "knowledge_year": {"type": ["integer", "null"]},
+    "period_id": {"type": ["string", "null"]},
+    "calendar_system": {"type": ["string", "null"]},
+    "precision": {"type": "string"},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+  },
+  "additionalProperties": false
+}
