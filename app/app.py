@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st  # noqa: I001
 
 
 st.set_page_config(
