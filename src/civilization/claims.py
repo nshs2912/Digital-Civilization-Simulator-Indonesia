@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class ClaimType(str, Enum):
@@ -23,17 +22,20 @@ class ClaimLifecycle(str, Enum):
 
 @dataclass(frozen=True)
 class KnowledgeClaim:
+    claim_id: str
     subject_id: str
     predicate: str
-    object_id: Optional[str]
+    object_id: str | None
     claim_text: str
     claim_type: ClaimType
-    lifecycle: ClaimLifecycle
     evidence_ids: tuple[str, ...] = ()
-    confidence: Optional[float] = None
+    confidence: float | None = None
+    lifecycle: ClaimLifecycle = ClaimLifecycle.PROPOSED
 
     def validate(self) -> list[str]:
         errors: list[str] = []
+        if not self.claim_id:
+            errors.append("claim_id is required")
         if not self.subject_id:
             errors.append("subject_id is required")
         if not self.predicate:
