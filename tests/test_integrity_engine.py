@@ -15,7 +15,15 @@ def test_valid_record_has_no_integrity_errors():
 
 
 def test_fact_without_evidence_is_invalid():
-    claim = KnowledgeClaim("claim:unsupported", "person:1", "LIVED_AT", "place:1",
-                            "Person lived here", "FACT", (), 0.9)
+    claim = KnowledgeClaim(
+        "claim:unsupported",
+        "person:1",
+        "LIVED_AT",
+        "place:1",
+        "Person lived here",
+        "FACT",
+        (),
+        0.9,
+    )
     issues = HistoricalIntegrityEngine.validate_claim_evidence((claim,))
     assert issues[0].code == "UNSUPPORTED_CLAIM"
