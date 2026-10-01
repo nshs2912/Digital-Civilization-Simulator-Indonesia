@@ -89,8 +89,6 @@ TEXT = {
         "ask": "Ask Civilization AI",
         "ai_note": "AI sits above the Knowledge Graph and Evidence Graph; answers should remain traceable to sources.",
         "simulation_note": "A simulation is a model, not a historical fact.",
-        "choose_language": "Pilih Bahasa / Choose Language",
-        "question_empty": "Masukkan pertanyaan." if False else "Masukkan pertanyaan.",
     },
 }
 
