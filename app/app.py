@@ -1,6 +1,16 @@
+from pathlib import Path
+import sys
+
 import streamlit as st
 
-from src.civilization.ai import get_openai_api_key
+
+# Streamlit Cloud executes this file from the app/ directory. Add the
+# repository root explicitly so the civilization package is importable.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from src.civilization.ai import get_openai_api_key  # noqa: E402
 
 
 st.set_page_config(
@@ -24,11 +34,13 @@ st.info(
 
 try:
     openai_api_key = get_openai_api_key()
-except Exception:
+except RuntimeError:
     openai_api_key = None
 
 if openai_api_key:
-    st.success("🟢 OpenAI API configured — Civilization AI is ready for the next integration stage.")
+    st.success(
+        "🟢 OpenAI API configured — Civilization AI is ready for the next integration stage."
+    )
 else:
     st.warning(
         "Configure OPENAI_API_KEY in Streamlit Secrets before enabling AI features."
