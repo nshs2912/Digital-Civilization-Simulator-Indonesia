@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Historical Source",
+  "type": "object",
+  "required": ["source_id", "title"],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "author": {"type": ["string", "null"]},
+    "publication": {"type": ["string", "null"]},
+    "edition": {"type": ["string", "null"]},
+    "language": {"type": ["string", "null"]},
+    "publication_year": {"type": ["integer", "null"]},
+    "citation": {"type": ["string", "null"]},
+    "provenance": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
