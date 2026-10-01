@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Historical Evidence",
+  "type": "object",
+  "required": ["evidence_id", "evidence_type", "strength", "description", "source_ids"],
+  "properties": {
+    "evidence_id": {"type": "string", "minLength": 1},
+    "evidence_type": {"type": "string", "enum": ["DIRECT", "INDIRECT", "CONTEXTUAL", "INFERRED"]},
+    "strength": {"type": "string", "enum": ["STRONG", "MODERATE", "WEAK", "UNKNOWN"]},
+    "description": {"type": "string", "minLength": 1},
+    "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+  },
+  "additionalProperties": false
+}
