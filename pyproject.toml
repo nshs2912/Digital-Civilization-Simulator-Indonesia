@@ -1,0 +1,12 @@
+[project]
+name = "digital-civilization-simulator-indonesia"
+version = "0.1.0"
+description = "Bilingual AI-powered Digital Civilization Simulator for Nusantara/Indonesia."
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
