@@ -645,7 +645,11 @@ def render_era() -> None:
 def render_simulation() -> None:
     page_header(t["simulation"], "Run transparent historical scenarios.")
     st.info(t["simulation_note"])
-    baseline = st.selectbox("Baseline / Dasar", ["Borobudur around 800 CE"])
+
+    baseline = st.selectbox(
+        "Baseline / Dasar",
+        ["Borobudur around 800 CE"],
+    )
     assumption = st.selectbox(
         "Scenario assumption / Asumsi skenario",
         [
@@ -654,14 +658,97 @@ def render_simulation() -> None:
             "Environmental pressure increases",
         ],
     )
+    intensity = st.slider(
+        "Scenario intensity / Intensitas skenario",
+        10,
+        50,
+        25,
+        5,
+    )
+
     st.write(f"**Baseline:** {baseline}")
     st.write(f"**Assumption:** {assumption}")
+    st.write(f"**Intensity:** {intensity}%")
+
     if st.button("🎮 Run Scenario / Jalankan Skenario", use_container_width=True):
+        with st.spinner(
+            "⏳ Scenario engine sedang menjalankan model..."
+            if language == "ID"
+            else "⏳ Scenario engine is running the model..."
+        ):
+            # This is an illustrative simulation model, not a reconstruction of
+            # measured historical quantities. Baseline index = 100.
+            trade_index = 100
+            exchange_index = 100
+            environment_pressure = 100
+            resilience_index = 100
+
+            delta = intensity / 100
+            if assumption == "Trade activity increases":
+                trade_index += 100 * delta
+                exchange_index += 60 * delta
+                environment_pressure += 20 * delta
+                resilience_index += 10 * delta
+            elif assumption == "Trade activity decreases":
+                trade_index -= 100 * delta
+                exchange_index -= 60 * delta
+                environment_pressure -= 10 * delta
+                resilience_index -= 15 * delta
+            else:
+                environment_pressure += 100 * delta
+                exchange_index -= 30 * delta
+                resilience_index -= 70 * delta
+
+            scenario_rows = [
+                [
+                    "Trade activity / Aktivitas perdagangan",
+                    100,
+                    round(trade_index, 1),
+                ],
+                [
+                    "Exchange / Pertukaran",
+                    100,
+                    round(exchange_index, 1),
+                ],
+                [
+                    "Environmental pressure / Tekanan lingkungan",
+                    100,
+                    round(environment_pressure, 1),
+                ],
+                [
+                    "Resilience / Ketahanan",
+                    100,
+                    round(resilience_index, 1),
+                ],
+            ]
+
         st.success(
-            "Scenario boundary created: baseline + assumption + model + uncertainty."
+            "✅ Scenario completed / Skenario selesai"
         )
         st.caption(
-            "🔵 Simulation output is hypothetical and must not be presented as historical fact."
+            "🔵 Simulation — illustrative index model. It is hypothetical and "
+            "must not be presented as historical fact."
+        )
+        st.subheader("📊 Scenario Output / Hasil Skenario")
+        st.table(
+            {
+                "Dimension / Dimensi": [row[0] for row in scenario_rows],
+                "Baseline Index": [row[1] for row in scenario_rows],
+                "Scenario Index": [row[2] for row in scenario_rows],
+            }
+        )
+        st.write(
+            "**Model boundary / Batas model:** baseline + assumption + intensity + "
+            "illustrative rules + uncertainty."
+        )
+        st.warning(
+            "These indices are model outputs, not historical measurements. "
+            "Evidence retrieval and calibrated historical models are required before "
+            "using real historical claims."
+            if language == "EN"
+            else "Indeks ini adalah keluaran model, bukan pengukuran historis. "
+            "Evidence retrieval dan model historis yang terkalibrasi diperlukan "
+            "sebelum membuat klaim historis nyata."
         )
 
 
