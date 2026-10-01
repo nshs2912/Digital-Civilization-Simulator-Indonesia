@@ -34,9 +34,7 @@ class HistoricalKnowledgeRecord:
             errors.extend(f"evidence: {e}" for e in item.validate())
             missing = set(item.source_ids) - source_ids
             if missing:
-                errors.append(
-                    f"evidence {item.evidence_id} references missing sources: {sorted(missing)}"
-                )
+                errors.append(f"evidence {item.evidence_id} references missing sources: {sorted(missing)}")
         for item in self.provenance:
             errors.extend(f"provenance: {e}" for e in item.validate())
             if item.claim_id != self.claim_id:
