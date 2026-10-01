@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Historical Provenance",
+  "type": "object",
+  "required": ["provenance_id", "claim_id", "evidence_id", "source_id", "method", "created_by", "review_status", "created_at"],
+  "properties": {
+    "provenance_id": {"type": "string", "minLength": 1},
+    "claim_id": {"type": "string", "minLength": 1},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "method": {"type": "string", "minLength": 1},
+    "created_by": {"type": "string", "minLength": 1},
+    "review_status": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}
