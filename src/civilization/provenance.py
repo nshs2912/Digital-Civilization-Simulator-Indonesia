@@ -24,6 +24,6 @@ class Provenance:
             ("review_status", self.review_status),
             ("created_at", self.created_at),
         ):
-            if not value:
+            if not value or not str(value).strip():
                 errors.append(f"{name} is required")
         return errors

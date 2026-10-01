@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 
 @dataclass(frozen=True)
@@ -9,6 +10,14 @@ class IntegrityIssue:
 
 
 class HistoricalIntegrityEngine:
+    @staticmethod
+    def _normalize(value: object) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, Enum):
+            return value.value
+        return str(value).strip().upper()
+
     @staticmethod
     def detect_anachronism(
         person_lived_until: int,
@@ -25,15 +34,19 @@ class HistoricalIntegrityEngine:
 
     @staticmethod
     def validate_claim_evidence(claims) -> list[IntegrityIssue]:
-        return [
-            IntegrityIssue(
-                "UNSUPPORTED_CLAIM",
-                "ERROR",
-                f"Claim {claim.claim_id} is marked FACT without evidence.",
-            )
-            for claim in claims
-            if claim.claim_type == "FACT" and not claim.evidence_ids
-        ]
+        issues: list[IntegrityIssue] = []
+        for claim in claims:
+            claim_type = HistoricalIntegrityEngine._normalize(getattr(claim, "claim_type", ""))
+            evidence_ids = getattr(claim, "evidence_ids", ()) or ()
+            if claim_type == "FACT" and not evidence_ids:
+                issues.append(
+                    IntegrityIssue(
+                        "UNSUPPORTED_CLAIM",
+                        "ERROR",
+                        f"Claim {claim.claim_id} is marked FACT without evidence.",
+                    )
+                )
+        return issues
 
     @staticmethod
     def validate_temporal_range(
@@ -67,7 +80,8 @@ class HistoricalIntegrityEngine:
                     f"{label} has model confidence outside 0..1.",
                 )
             ]
-        if evidence_strength in {"INFERRED", "CONTEXTUAL"} and model_confidence > 0.95:
+        strength = HistoricalIntegrityEngine._normalize(evidence_strength)
+        if strength in {"INFERRED", "CONTEXTUAL"} and model_confidence > 0.95:
             return [
                 IntegrityIssue(
                     "CONFIDENCE_MISMATCH",
@@ -83,7 +97,7 @@ class HistoricalIntegrityEngine:
         simulation: bool,
         label: str,
     ) -> list[IntegrityIssue]:
-        if simulation and claim_type == "FACT":
+        if simulation and HistoricalIntegrityEngine._normalize(claim_type) == "FACT":
             return [
                 IntegrityIssue(
                     "SIMULATION_AS_FACT",
@@ -99,7 +113,7 @@ class HistoricalIntegrityEngine:
         second_place_id: str | None,
         label: str,
     ) -> list[IntegrityIssue]:
-        if first_place_id and second_place_id and first_place_id != second_place_id:
+        if first_place_id and second_place_id and str(first_place_id).strip() != str(second_place_id).strip():
             return [
                 IntegrityIssue(
                     "SPATIAL_CONFLICT",
@@ -113,9 +127,9 @@ class HistoricalIntegrityEngine:
     def validate_knowledge_record(record) -> list[IntegrityIssue]:
         issues = [
             IntegrityIssue("KNOWLEDGE_RECORD_INVALID", "ERROR", error)
-            for error in record.validate()
+            for error in getattr(record, "validate", lambda: [])()
         ]
-        if not record.evidence:
+        if not getattr(record, "evidence", ()):
             issues.append(
                 IntegrityIssue(
                     "MISSING_EVIDENCE",
@@ -123,7 +137,7 @@ class HistoricalIntegrityEngine:
                     f"Record {record.record_id} has no evidence.",
                 )
             )
-        if record.spatial_context is None:
+        if getattr(record, "spatial_context", None) is None:
             issues.append(
                 IntegrityIssue(
                     "MISSING_SPATIAL_CONTEXT",

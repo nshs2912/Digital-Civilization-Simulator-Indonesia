@@ -23,16 +23,16 @@ class EvidenceStrength(str, Enum):
 @dataclass(frozen=True)
 class Evidence:
     evidence_id: str
-    evidence_type: EvidenceType
-    strength: EvidenceStrength
+    evidence_type: EvidenceType | str
+    strength: EvidenceStrength | str
     description: str
     source_ids: tuple[str, ...] = ()
 
     def validate(self) -> list[str]:
         errors: list[str] = []
-        if not self.evidence_id:
+        if not self.evidence_id or not str(self.evidence_id).strip():
             errors.append("evidence_id is required")
-        if not self.description:
+        if not self.description or not str(self.description).strip():
             errors.append("description is required")
         if not self.source_ids:
             errors.append("evidence must reference at least one source")

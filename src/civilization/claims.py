@@ -27,23 +27,24 @@ class KnowledgeClaim:
     predicate: str
     object_id: str | None
     claim_text: str
-    claim_type: ClaimType
+    claim_type: ClaimType | str
     evidence_ids: tuple[str, ...] = ()
     confidence: float | None = None
     lifecycle: ClaimLifecycle = ClaimLifecycle.PROPOSED
 
     def validate(self) -> list[str]:
         errors: list[str] = []
-        if not self.claim_id:
+        if not self.claim_id or not str(self.claim_id).strip():
             errors.append("claim_id is required")
-        if not self.subject_id:
+        if not self.subject_id or not str(self.subject_id).strip():
             errors.append("subject_id is required")
-        if not self.predicate:
+        if not self.predicate or not str(self.predicate).strip():
             errors.append("predicate is required")
-        if not self.claim_text:
+        if not self.claim_text or not str(self.claim_text).strip():
             errors.append("claim_text is required")
         if self.confidence is not None and not 0 <= self.confidence <= 1:
             errors.append("confidence must be between 0 and 1")
-        if self.claim_type == ClaimType.FACT and not self.evidence_ids:
+        claim_type = self.claim_type.value if isinstance(self.claim_type, Enum) else str(self.claim_type).strip().upper()
+        if claim_type == ClaimType.FACT.value and not self.evidence_ids:
             errors.append("FACT claims require evidence")
         return errors

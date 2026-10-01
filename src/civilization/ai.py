@@ -22,7 +22,8 @@ def get_openai_api_key(secrets: Any | None = None) -> str:
 
 
 def classify_answer_type(answer_type: str) -> str:
+    normalized = str(answer_type).strip().upper()
     allowed = {"FACT", "INTERPRETATION", "SIMULATION", "COUNTERFACTUAL", "UNKNOWN"}
-    if answer_type not in allowed:
+    if normalized not in allowed:
         raise ValueError(f"Unsupported answer type: {answer_type}")
-    return answer_type
+    return normalized
