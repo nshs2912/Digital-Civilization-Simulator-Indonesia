@@ -25,22 +25,35 @@ class HistoricalKnowledgeRecord:
             errors.append("record_id is required")
         if not self.claim_id:
             errors.append("claim_id is required")
-        errors.extend(f"time: {e}" for e in self.time_context.validate())
+
+        errors.extend(f"time: {error}" for error in self.time_context.validate())
         if self.spatial_context is not None:
-            errors.extend(f"spatial: {e}" for e in self.spatial_context.validate())
-        evidence_ids = {e.evidence_id for e in self.evidence}
-        source_ids = {s.source_id for s in self.sources}
+            errors.extend(f"spatial: {error}" for error in self.spatial_context.validate())
+
+        evidence_ids = {item.evidence_id for item in self.evidence}
+        source_ids = {item.source_id for item in self.sources}
+
         for item in self.evidence:
-            errors.extend(f"evidence: {e}" for e in item.validate())
+            errors.extend(f"evidence: {error}" for error in item.validate())
             missing = set(item.source_ids) - source_ids
             if missing:
-                errors.append(f"evidence {item.evidence_id} references missing sources: {sorted(missing)}")
+                errors.append(
+                    f"evidence {item.evidence_id} references missing sources: {sorted(missing)}"
+                )
+
         for item in self.provenance:
-            errors.extend(f"provenance: {e}" for e in item.validate())
+            errors.extend(f"provenance: {error}" for error in item.validate())
             if item.claim_id != self.claim_id:
-                errors.append(f"provenance {item.provenance_id} points to another claim")
+                errors.append(
+                    f"provenance {item.provenance_id} points to another claim"
+                )
             if item.evidence_id not in evidence_ids:
-                errors.append(f"provenance {item.provenance_id} references missing evidence")
+                errors.append(
+                    f"provenance {item.provenance_id} references missing evidence"
+                )
             if item.source_id not in source_ids:
-                errors.append(f"provenance {item.provenance_id} references missing source")
+                errors.append(
+                    f"provenance {item.provenance_id} references missing source"
+                )
+
         return errors
