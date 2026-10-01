@@ -3,7 +3,16 @@ name = "digital-civilization-simulator-indonesia"
 version = "0.1.0"
 description = "Bilingual AI-powered Digital Civilization Simulator for Nusantara/Indonesia."
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "streamlit>=1.40,<2",
+    "openai>=1.68,<2",
+    "pandas>=2.2,<3",
+    "plotly>=5.24,<7",
+    "networkx>=3.3,<4",
+    "jsonschema>=4.23,<5",
+    "python-dateutil>=2.9,<3",
+    "requests>=2.32,<3",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
