@@ -406,8 +406,7 @@ def render_home() -> None:
     st.write(f"**{len(matching)} historical layer(s) intersect this time.**")
     cols = st.columns(3)
     for index, layer in enumerate(matching[:6]):
-        with cols[index % 3]:
-            with st.container(border=True):
+        with cols[index % 3], st.container(border=True):
                 st.markdown(f"**⏳ {layer['period']}**")
                 st.caption(layer["range"])
                 st.write(layer["themes"])
