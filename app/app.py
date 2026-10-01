@@ -384,10 +384,38 @@ def render_home() -> None:
         st.caption("Credentials stay outside source code.")
 
     st.divider()
-    st.subheader("⭐ Pilot Vertical Slice: Borobudur")
+    st.subheader("🌏 Indonesia / Nusantara Civilization Atlas")
     st.write(
-        "Place → Time → Civilization Snapshot → People → Community → "
-        "Knowledge Graph → Evidence → AI Guide"
+        "The simulator is designed as a multi-era, multi-region civilization atlas. "
+        "Borobudur is only one pilot site inside the larger historical landscape."
+    )
+    active_year = st.slider("Explore a starting year / Pilih tahun awal", -2400000, 2026, 800, 100)
+    matching = [
+        layer for layer in HISTORICAL_LAYERS
+        if layer["start"] <= active_year <= layer["end"]
+    ]
+    st.write(f"**{len(matching)} historical layer(s) intersect this time.**")
+    cols = st.columns(3)
+    for index, layer in enumerate(matching[:6]):
+        with cols[index % 3]:
+            with st.container(border=True):
+                st.markdown(f"**⏳ {layer['period']}**")
+                st.caption(layer["range"])
+                st.write(layer["themes"])
+                if st.button(
+                    "Explore / Jelajahi",
+                    key=f"home_layer_{layer['id']}",
+                    use_container_width=True,
+                ):
+                    st.session_state.page = "time"
+                    st.session_state.selected_layer = layer["id"]
+                    st.rerun()
+
+    st.divider()
+    st.subheader("⭐ Pilot Vertical Slice: Borobudur")
+    st.caption(
+        "Pilot site, not the scope of the whole simulator. "
+        "More regions and periods are first-class entities."
     )
     if st.button("🧭 Explore Borobudur / Jelajahi Borobudur", use_container_width=True):
         st.session_state.page = "places"
@@ -396,29 +424,77 @@ def render_home() -> None:
 
 
 def render_map() -> None:
-    page_header(t["map"], "Explore historical places with spatial context.")
-    st.map(
-        {"lat": [BOROBUDUR["lat"]], "lon": [BOROBUDUR["lon"]]},
-        latitude="lat",
-        longitude="lon",
-        zoom=6,
-    )
-    st.success("📍 Borobudur — Central Java, Indonesia")
+    page_header(t["map"], "Explore a multi-region historical landscape.")
+    points = [
+        {"name": "Sangiran", "lat": -7.45, "lon": 110.83},
+        {"name": "Borobudur", "lat": -7.6079, "lon": 110.2038},
+        {"name": "Prambanan", "lat": -7.752, "lon": 110.491},
+        {"name": "Palembang region", "lat": -2.99, "lon": 104.76},
+        {"name": "Ternate", "lat": 0.79, "lon": 127.38},
+        {"name": "Makassar", "lat": -5.1477, "lon": 119.4327},
+        {"name": "Banten region", "lat": -6.03, "lon": 106.16},
+        {"name": "Bali", "lat": -8.34, "lon": 115.09},
+    ]
+    st.map(points, latitude="lat", longitude="lon", zoom=4)
     st.caption(
-        "Spatial context is historical/archaeological context; modern administrative "
-        "boundaries are not projected backward automatically."
+        "Map points are representative exploration nodes, not a claim that each "
+        "location defines a whole civilization."
     )
 
 
 def render_time() -> None:
-    page_header(t["time"], "Move through historical time and inspect civilization snapshots.")
-    year = st.slider(t["year"], 600, 1200, BOROBUDUR["year"], 25)
-    st.subheader(f"{t['snapshot']} — {year}")
-    st.write(f"**{t['place']}:** {BOROBUDUR['name']}")
-    st.write(f"**{t['period']}:** {BOROBUDUR['period']}")
+    page_header(
+        t["time"],
+        "Explore the Indonesian/Nusantara historical landscape across deep time, "
+        "regions, and civilization layers.",
+    )
+    selected_region = st.selectbox(
+        "🌏 Region / Wilayah",
+        REGIONS,
+        format_func=lambda item: item[1],
+    )[0]
+    min_year = min(layer["start"] for layer in HISTORICAL_LAYERS)
+    max_year = max(layer["end"] for layer in HISTORICAL_LAYERS)
+    year = st.slider(
+        t["year"],
+        min_year,
+        max_year,
+        800,
+        100,
+    )
+
+    active = [
+        layer
+        for layer in HISTORICAL_LAYERS
+        if layer["start"] <= year <= layer["end"]
+        and (
+            selected_region == "All"
+            or selected_region.lower() in layer["regions"].lower()
+            or selected_region == "Maritime"
+            and "maritime" in layer["regions"].lower()
+        )
+    ]
+
+    st.subheader(f"🌏 {t['snapshot']} — {year}")
+    if not active:
+        st.info(
+            "No curated layer is shown for this exact combination yet. "
+            "The absence of a layer is not evidence that history was absent."
+        )
+        return
+
+    for layer in active:
+        with st.container(border=True):
+            st.subheader(f"⏳ {layer['period']} / {layer['id_period']}")
+            st.write(f"**Range:** {layer['range']}")
+            st.write(f"**Regions:** {layer['regions']}")
+            st.write(f"**Themes:** {layer['themes']}")
+            st.write("**Representative nodes:** " + ", ".join(layer["nodes"]))
+            st.caption(f"🟢 Evidence layer: {layer['evidence']}")
+
     st.info(
-        "This is a derived snapshot. It represents a modelled state at a selected "
-        "time and place, not a replacement for primary evidence."
+        "Temporal layers overlap. They are not a claim that one civilization "
+        "replaced another everywhere at the same time."
     )
 
 
